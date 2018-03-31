@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="add-users-table" author="russgray">
+        <createTable tableName="users">
+
+            <column name="user_id" type="bigserial">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="user_type" type="text">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="text"/>
+
+            <column name="email" type="varchar(100)"/>
+
+            <column name="is_verified"
+                    type="boolean"
+                    remarks="Indicates if the email address has been verified"
+                    defaultValueBoolean="false"/>
+
+            <column name="remote_user_id" type="varchar(128)" remarks="User id from oauth provider">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="remote_user_type" type="varchar(128)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="timestamp" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <addPrimaryKey tableName="users"
+                       columnNames="user_id"
+                       constraintName="users_pkey"/>
+
+        <addUniqueConstraint tableName="users"
+                             columnNames="email"
+                             constraintName="users_email_key" />
+
+        <addUniqueConstraint tableName="users"
+                             columnNames="remote_user_id, remote_user_type"
+                             constraintName="users_remote_user_id_remote_user_type_key" />
+    </changeSet>
+
+    <changeSet id="set-h2-user-sequence" author="russgray" dbms="h2">
+        <createSequence sequenceName="users_user_id_seq" incrementBy="5"/>
+        <addDefaultValue tableName="users" columnName="user_id" defaultValue="users_user_id_seq.nextval"/>
+    </changeSet>
+
+    <changeSet id="set-pg-user-sequence" author="russgray" dbms="postgresql">
+        <alterSequence incrementBy="5" sequenceName="users_user_id_seq"/>
+    </changeSet>
+
+    <changeSet id="add-lower-case-email-check" author="russgray">
+        <sql>
+            ALTER TABLE users
+            ADD CONSTRAINT users_lower_case_email_check
+            CHECK (email = lower(email));
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE users DROP CONSTRAINT users_lower_case_email_check;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

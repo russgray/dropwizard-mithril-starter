@@ -1,0 +1,47 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset='utf-8')
+
+        block title
+            title Example
+
+        meta(name='description', content='example')
+        meta(name='author', content='http://russgray.github.io')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='initial-scale=1.0')
+
+
+        //- Fonts
+        link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css")
+
+
+        //- favicons
+        link(rel="shortcut icon", href="img/icons/favicon.ico")
+        link(rel="apple-touch-icon", sizes="114x114", href="img/icons/apple-touch-icon-114x114.png")
+        link(rel="apple-touch-icon", sizes="72x72", href="img/icons/apple-touch-icon-72x72.png")
+        link(rel="apple-touch-icon", href="img/icons/apple-touch-icon.png")
+
+
+        //- 3rd-party styles
+        link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css")
+        link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/black/pace-theme-flash.min.css")
+
+    body
+        block content
+
+            div#main
+
+            script(src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js")
+
+            //- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent
+            script(src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/1.0.9/cookieconsent.min.js")
+            script.
+                window.cookieconsent_options = {
+                    "message": "This website uses cookies to ensure you get the best experience on our website",
+                    "dismiss": "Got it!",
+                    "learnMore": "More info",
+                    "link": "https://www.example.com/#!/privacy",
+                    "theme": false
+                };
+            //- End Cookie Consent plugin

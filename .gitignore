@@ -1,0 +1,8 @@
+roles/
+*.log
+
+#### joe made this: http://goel.io/joe
+
+#####=== Vagrant ===#####
+.vagrant/
+

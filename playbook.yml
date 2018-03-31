@@ -1,0 +1,32 @@
+- hosts: all
+  become: yes
+  vars_files:
+    - vars/main.yml
+  roles:
+    - angstwad.docker_ubuntu
+  tasks:
+    - name: Add user to docker group.
+      user: name=ubuntu groups=docker append=yes
+
+    - name: Install required system packages.
+      apt: pkg={{ item }} state=installed update-cache=yes
+      with_items: "{{ system_packages }}"
+
+    - name: Get dotfiles
+      git: repo=https://github.com/russgray/dotfiles.git dest=/home/ubuntu/dotfiles
+
+    - name: Create screenrc symlink
+      file: src=/home/ubuntu/dotfiles/screenrc dest=/home/ubuntu/.screenrc state=link
+
+    - name: Add bash functions
+      blockinfile:
+        dest: /home/ubuntu/.bashrc
+        block: |
+          dcleanup(){
+            docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
+            docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
+          }
+
+          alias npm='docker run -it --rm -v /vagrant/src:/code russgray/npm-build npm'
+          alias npi='npm install --no-bin-links --no-optional'
+

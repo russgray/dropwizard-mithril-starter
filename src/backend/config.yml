@@ -1,0 +1,36 @@
+server:
+  type: simple
+  applicationContextPath: /
+  rootPath: /api
+  adminContextPath: /admin
+  connector:
+    type: http
+    port: ${PORT:-8080}
+
+database:
+  driverClass: org.h2.Driver
+  user: sa
+  password: sa
+  url: jdbc:h2:./target/example
+
+logging:
+  level: INFO
+  loggers:
+    uk.me.shinyhead: DEBUG
+    org.hibernate.SQL: DEBUG
+  appenders:
+    - type: console
+      logFormat: "%-5p %X{uuid} %c{0}: %m%n%rEx"
+
+shiro:
+  iniConfigs: ["classpath:shiro.ini"]
+
+oauth:
+  twitterApiKey: ${TWITTER_API_KEY:-"DUMMY TWITTER KEY"}
+  twitterApiSecret: ${TWITTER_API_SECRET:-"DUMMY TWITTER SECRET"}
+  facebookApiKey: ${FACEBOOK_API_KEY:-"DUMMY FACEBOOK KEY"}
+  facebookApiSecret: ${FACEBOOK_API_SECRET:-"DUMMY FACEBOOK SECRET"}
+
+assets:
+  overrides:
+    /: src/main/resources/assets/

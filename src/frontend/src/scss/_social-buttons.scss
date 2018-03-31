@@ -1,0 +1,34 @@
+@mixin social-button($bg, $bgactive, $bghover) {
+    width: 50%;
+    padding: 0px 4px;
+    border: 0px;
+    .button {
+        color: #fff;
+        background: $bg;
+        width: 100%;
+        height: 2.5em;
+        &:active {
+            background-color: $bgactive;
+        }
+        &:hover {
+            background-color: $bghover;
+        }
+    }
+}
+
+.social-logins {
+    .buttons {
+        .facebook-login-button {
+            @include social-button(#3b5998, #2d4373, #4c70ba);
+        }
+        .twitter-login-button {
+            @include social-button(#00aced, #0087ba, #21c2ff);
+        }
+        .windows-login-button {
+            @include social-button(#e3b30d, #b38d0a, #f3c730);
+        }
+        .google-login-button {
+            @include social-button(#dd4b39, #c23321, #e47365);
+        }
+    }
+}

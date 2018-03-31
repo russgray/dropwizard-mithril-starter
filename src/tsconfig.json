@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "sourceMap": true,
+        "outDir": "public",
+        "lib": ["dom", "es2015.promise", "es5"],
+        "noUnusedLocals": true
+    },
+    "include": [
+        "frontend/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

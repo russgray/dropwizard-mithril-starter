@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+
+    <!--roles-->
+    <changeSet id="add-roles-table" author="russgray">
+
+        <createTable tableName="roles">
+            <column name="role_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="roles"
+                       columnNames="role_name"
+                       constraintName="roles_pkey"/>
+    </changeSet>
+
+
+
+    <!--permissions-->
+    <changeSet id="add-permissions-table" author="russgray">
+
+        <createTable tableName="permissions">
+            <column name="permission_id" type="serial">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_name" type="varchar(100)">
+                <constraints nullable="false"
+                             foreignKeyName="permissions_role_name_fkey"
+                             references="roles(role_name)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="permission_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="permission_id"
+                       constraintName="permissions_pkey"
+                       tableName="permissions"/>
+
+        <addUniqueConstraint tableName="permissions"
+                             columnNames="role_name, permission_name"
+                             constraintName="permissions_role_name_permission_name_key"/>
+    </changeSet>
+
+    <changeSet id="set-h2-permission-sequence" author="russgray" dbms="h2">
+        <createSequence sequenceName="permissions_permission_id_seq"/>
+        <addDefaultValue tableName="permissions"
+                         columnName="permission_id"
+                         defaultValueComputed="cast(permissions_permission_id_seq.nextval as int)"/>
+    </changeSet>
+
+
+
+    <!--user roles -->
+    <changeSet id="add-user-roles-table" author="russgray">
+
+        <createTable tableName="user_roles">
+            <column name="user_role_id" type="serial">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="user_roles_user_id_fkey"
+                             references="users(user_id)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="role_name" type="varchar(100)">
+                <constraints nullable="false"
+                             foreignKeyName="user_roles_role_name_fkey"
+                             references="roles(role_name)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <addPrimaryKey tableName="user_roles"
+                       columnNames="user_role_id"
+                       constraintName="user_roles_pkey"/>
+
+        <addUniqueConstraint tableName="user_roles"
+                             columnNames="user_id, role_name"
+                             constraintName="user_roles_user_id_role_name_key"/>
+
+    </changeSet>
+
+    <changeSet id="set-h2-user-role-sequence" author="russgray" dbms="h2">
+        <createSequence sequenceName="user_roles_user_role_id_seq" incrementBy="5"/>
+        <addDefaultValue tableName="user_roles"
+                         columnName="user_role_id"
+                         defaultValueComputed="cast(user_roles_user_role_id_seq.nextval as int)"/>
+    </changeSet>
+
+    <changeSet id="set-pg-user-role-sequence" author="russgray" dbms="postgresql">
+        <alterSequence incrementBy="5" sequenceName="user_roles_user_role_id_seq"/>
+    </changeSet>
+
+
+
+    <!--seed data-->
+    <changeSet id="initial-populate-roles-table" author="russgray">
+        <sql>
+            INSERT INTO roles (role_name, description) VALUES
+            ('ADMIN', 'Administrative user'),
+            ('USER', 'Normal user');
+        </sql>
+        <rollback>
+            DELETE FROM roles;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="initial-populate-permissions-table" author="russgray">
+        <sql>
+            INSERT INTO permissions (permission_name, role_name, description) VALUES
+            ('*', 'ADMIN', 'Admin has access to all resources'),
+            ('backupset:create', 'USER', 'Create access to backup-set resources'),
+            ('backupset:read', 'USER', 'Read access to backup-set resources'),
+            ('backupset:update', 'USER', 'Update access to backup-set resources'),
+            ('backupset:delete', 'USER', 'Delete access to backup-set resources');
+        </sql>
+        <rollback>
+            DELETE FROM permissions;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
